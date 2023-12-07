@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import Button from '../components/Button';
 
 export function Signup() {
-    let navigate = useNavigation();
+    let navigator = useNavigation();
     return (
         <KeyboardAvoidingView behavior='height' style={styles.mainContainer}>
             <View style={styles.container}>
@@ -18,12 +18,14 @@ export function Signup() {
                     <TextInput style={styles.input} placeholder='Fullname' />
                     <TextInput style={styles.input} placeholder='Email' />
                     <TextInput secureTextEntry style={styles.input} placeholder='Password' />
-                    <Button title={"Signup"} color={"#4CAF50"} />
+                    <Button onPress={() => {
+                        navigator.push("Main");
+                    }} title={"Signup"} color={"#4CAF50"} />
                 </View>
                 <View style={styles.callback}>
                     <Text>Already have an account?</Text>
                     <Pressable onPress={() => {
-                        navigate.replace("Signin");
+                        navigator.replace("Signin");
                     }}>
                         <Text>Signin</Text>
                     </Pressable>
@@ -34,7 +36,7 @@ export function Signup() {
 }
 
 export function Signin() {
-    let navigate = useNavigation();
+    let navigator = useNavigation();
     return (
         <KeyboardAvoidingView behavior='height' style={styles.mainContainer}>
             <View style={styles.container}>
@@ -46,12 +48,14 @@ export function Signin() {
                 <View style={styles.subContainer2}>
                     <TextInput style={styles.input} placeholder='Email' />
                     <TextInput secureTextEntry style={styles.input} placeholder='Password' />
-                    <Button title={"Signin"} color={"#4CAF50"} />
+                    <Button onPress={() => {
+                        navigator.push("Main");
+                    }} title={"Signin"} color={"#4CAF50"} />
                 </View>
                 <View style={styles.callback}>
                     <Text>Doesn't have an account?</Text>
                     <Pressable onPress={() => {
-                        navigate.replace("Signup");
+                        navigator.replace("Signup");
                     }}>
                         <Text>Create one</Text>
                     </Pressable>
