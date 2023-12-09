@@ -1,8 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput } from 'react-native';
 import { View } from 'react-native';
 import Button from '../components/Button';
+import { publicApi } from '../utils/client.utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/AuthState';
 
 export function Signup() {
     let navigator = useNavigation();
@@ -36,7 +39,29 @@ export function Signup() {
 }
 
 export function Signin() {
-    let navigator = useNavigation();
+
+    let auth = useContext(AuthContext);
+    const [data, setData] = useState({
+        providerId: "",
+        password: ""
+    });
+    const [loader, setLoader] = useState(false);
+
+    const handleSubmit = async () => {
+        if(!loader){
+            setLoader(true);
+            publicApi.post("/api/user", data).then((res) => {
+                let token = res.headers["set-cookie"][0].split(";")[0].substring(13);
+                AsyncStorage.setItem("x-auth-token", token);
+                auth.login();
+                setLoader(false);
+            }).catch((err) => {
+                console.log(err);
+                setLoader(false);
+            })
+        }
+    }
+
     return (
         <KeyboardAvoidingView behavior='height' style={styles.mainContainer}>
             <View style={styles.container}>
@@ -46,11 +71,9 @@ export function Signin() {
                     <Text style={styles.text}>Free on Spotify.</Text>
                 </View>
                 <View style={styles.subContainer2}>
-                    <TextInput style={styles.input} placeholder='Email' />
-                    <TextInput secureTextEntry style={styles.input} placeholder='Password' />
-                    <Button onPress={() => {
-                        navigator.push("Main");
-                    }} title={"Signin"} color={"#4CAF50"} />
+                    <TextInput onChangeText={(text) => setData((prev) => ({...prev, providerId: text}))} style={styles.input} placeholder='Email' />
+                    <TextInput onChangeText={(text) => setData((prev) => ({...prev, password: text}))} secureTextEntry style={styles.input} placeholder='Password' />
+                    <Button onPress={handleSubmit} title={"Signin"} color={"#4CAF50"} />
                 </View>
                 <View style={styles.callback}>
                     <Text>Doesn't have an account?</Text>
